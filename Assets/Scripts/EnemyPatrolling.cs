@@ -6,6 +6,7 @@ public class EnemyState: MonoBehaviour
 {
     public bool stunned;
     public string color;
+    public string buff;
     public bool absorbable;
     public int life;
 }
@@ -27,6 +28,7 @@ public class EnemyPatrolling : EnemyState
         anim = GetComponent<Animator>();
         currentPoint = pointB.transform;
         color = "green";
+        buff = "stick";
         stunned = false;
     }
 

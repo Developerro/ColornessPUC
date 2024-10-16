@@ -4,6 +4,7 @@ using UnityEngine;
 using System;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using UnityEngine.InputSystem.Controls;
 
 
 public class PlayerController : MonoBehaviour
@@ -23,6 +24,10 @@ public class PlayerController : MonoBehaviour
     public float kbTime;
     public bool isKnockRight;
     public EnemyState enemy;
+    public bool onWall;
+
+    //Buffs
+    public bool stick;
 
     // Start is called before the first frame update
     void Start()
@@ -38,11 +43,26 @@ public class PlayerController : MonoBehaviour
     {
         HealtLogic();
         DeadState();
-        KnockLogic();
+        BuffsLogic();
         AbsorbLogic();
+        KnockLogic();
     }
 
-   
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if(collision.gameObject.tag == "Wall")
+        {
+            onWall = true;
+        }
+    }
+
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        if (collision.gameObject.tag == "Wall")
+        {
+            onWall = false;
+        }
+    }
     private void OnTriggerStay2D(Collider2D collision)
     {
         if (collision.gameObject.tag == "Enemy")
@@ -72,9 +92,36 @@ public class PlayerController : MonoBehaviour
         if (mode == "green")
         {
             animator.SetInteger("Mode", 1);
-            jumpForce = 30;
-            speed = 15;
+            if(enemy.buff == "stick")
+            {
+                stick = true;
+            }
         }
+    }
+
+    void BuffsLogic()
+    {
+        if (stick)
+        animator.SetBool("onWall", onWall);
+        {
+            if (onWall && !isGrounded)
+            {
+                pBody.constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezePositionY;
+                if (Input.GetKeyDown(KeyCode.W))
+                {
+                    onWall = false;
+                    pBody.constraints = RigidbodyConstraints2D.None;
+                    pBody.constraints = RigidbodyConstraints2D.FreezeRotation;
+                    pBody.velocity = new Vector2(pBody.velocity.x, jumpForce);
+                }
+            }
+
+            else
+            {
+                KnockLogic();
+            }
+        }
+
     }
     void MoveLogic()
     {
