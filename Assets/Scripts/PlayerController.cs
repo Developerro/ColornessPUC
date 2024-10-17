@@ -103,6 +103,8 @@ public class PlayerController : MonoBehaviour
     {
         if (stick)
         animator.SetBool("onWall", onWall);
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, -Vector2.left, 0.5f);
+        Debug.Log("pão: " + hit.collider);
         {
             if (onWall && !isGrounded)
             {
