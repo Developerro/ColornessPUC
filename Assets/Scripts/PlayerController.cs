@@ -25,9 +25,14 @@ public class PlayerController : MonoBehaviour
     public bool isKnockRight;
     public EnemyState enemy;
     public bool onWall;
+    public bool StickOnWall;
 
     //Buffs
     public bool stick;
+
+    public bool shoot; 
+    public GameObject shootPrefab;
+    public float shootSpeed = 10f;
 
     // Start is called before the first frame update
     void Start()
@@ -96,31 +101,59 @@ public class PlayerController : MonoBehaviour
             {
                 stick = true;
             }
+            if(enemy.buff == "shoot")
+            {
+                shoot = true;
+            }
         }
     }
 
     void BuffsLogic()
     {
+        //StickBuff
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, -Vector2.left, 2);
         if (stick)
-        animator.SetBool("onWall", onWall);
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, -Vector2.left, 0.5f);
-        Debug.Log("pão: " + hit.collider);
         {
             if (onWall && !isGrounded)
             {
-                pBody.constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezePositionY;
+                animator.SetBool("onWall", true);
+                StickOnWall = true;
+                if (hit) 
+                {
+                    spriteRenderer.flipX = true;
+                }
+                else
+                {
+                    spriteRenderer.flipX = false;
+                }
+
+                pBody.constraints = RigidbodyConstraints2D.FreezeRotation | RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezePositionY;
                 if (Input.GetKeyDown(KeyCode.W))
                 {
                     onWall = false;
-                    pBody.constraints = RigidbodyConstraints2D.None;
-                    pBody.constraints = RigidbodyConstraints2D.FreezeRotation;
-                    pBody.velocity = new Vector2(pBody.velocity.x, jumpForce);
+                    pBody.constraints &= ~RigidbodyConstraints2D.FreezePositionX;
+                    pBody.constraints &= ~RigidbodyConstraints2D.FreezePositionY;
+                    pBody.velocity = new Vector2(pBody.velocity.x, jumpForce + 3);
                 }
             }
 
             else
             {
+                animator.SetBool("onWall", false);
+                StickOnWall = false;
                 KnockLogic();
+            }
+        }
+
+        //ShootBuff
+        if (shoot)
+        {
+            if (Input.GetKeyDown(KeyCode.F))
+            {
+                float direction = spriteRenderer.flipX ? -1f : 1f;
+                GameObject shootInstance = Instantiate(shootPrefab, transform.position, Quaternion.identity);
+                Rigidbody2D shootRb = shootInstance.GetComponent<Rigidbody2D>();
+                shootRb.velocity = new Vector2(direction * shootSpeed, 0);
             }
         }
 
@@ -144,7 +177,11 @@ public class PlayerController : MonoBehaviour
         //Flip
         if (moveHorizontal != 0f)
         {
-            spriteRenderer.flipX = moveHorizontal < 0;
+            if (!StickOnWall)
+            {
+                spriteRenderer.flipX = moveHorizontal < 0;
+            }
+            
         }
     }
 
