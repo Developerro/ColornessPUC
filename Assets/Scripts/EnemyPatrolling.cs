@@ -107,17 +107,7 @@ public class EnemyPatrolling : EnemyState
             }
             else
             {
-                player.kbCount = player.kbTime;
-                if (collision.transform.position.x <= transform.position.x)
-                {
-                    player.isKnockRight = true;
-                }
-                if (collision.transform.position.x > transform.position.x)
-                {
-                    player.isKnockRight = false;
-                }
-                player.life--;
-                player.animator.SetTrigger("TakeDamage");
+                player.TakeDamage(collision);
             }
 
             

@@ -64,6 +64,10 @@ public class PlayerController : MonoBehaviour
         {
             onWall = true;
         }
+        if (collision.gameObject.tag == "DamageArea")
+        {
+            TakeDamage(collision);
+        }
     }
 
     private void OnCollisionExit2D(Collision2D collision)
@@ -246,6 +250,21 @@ public class PlayerController : MonoBehaviour
             }
         }
         kbCount -= Time.deltaTime;
+    }
+
+    public void TakeDamage(Collision2D collision)
+    {
+        kbCount = kbTime;
+        if (collision.transform.position.x <= transform.position.x)
+        {
+            isKnockRight = true;
+        }
+        if (collision.transform.position.x > transform.position.x)
+        {
+            isKnockRight = false;
+        }
+        life--;
+        animator.SetTrigger("TakeDamage");
     }
 
 }
