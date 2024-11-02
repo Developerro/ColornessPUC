@@ -27,12 +27,17 @@ public class PlayerController : MonoBehaviour
     public bool onWall;
     public bool StickOnWall;
 
-    //Buffs
+    //BUFFS
+
+    //Stick
     public bool stick;
 
-    public bool shoot; 
-    public GameObject shootPrefab;
-    public float shootSpeed = 10f;
+    //Shoot
+    public bool shoot;
+    public GameObject ShootPrefab;
+    public Transform ShootingPoint;
+    public float shootCooldown = 0.5f; 
+    private float lastShootTime;
 
     // Start is called before the first frame update
     void Start()
@@ -83,7 +88,9 @@ public class PlayerController : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        enemy.absorbable = false;
+        try { enemy.absorbable = false; }
+        catch { }
+       
     }
 
     void AbsorbLogic()
@@ -111,22 +118,25 @@ public class PlayerController : MonoBehaviour
     void BuffsLogic()
     {
         //StickBuff
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, -Vector2.left, 2);
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, transform.localScale.x > 0 ? Vector2.right : Vector2.left, 2);
         if (stick)
         {
             if (onWall && !isGrounded)
             {
                 animator.SetBool("onWall", true);
                 StickOnWall = true;
-                if (hit) 
-                {
-                    spriteRenderer.flipX = true;
-                }
-                else
-                {
-                    spriteRenderer.flipX = false;
-                }
 
+                if (hit.collider != null)
+                {
+                    if (hit.point.x > transform.position.x)
+                    {
+                        transform.localScale = new Vector3(-Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
+                    }
+                    else 
+                    {
+                        transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
+                    }
+                }
                 pBody.constraints = RigidbodyConstraints2D.FreezeRotation | RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezePositionY;
                 if (Input.GetKeyDown(KeyCode.W))
                 {
@@ -136,7 +146,6 @@ public class PlayerController : MonoBehaviour
                     pBody.velocity = new Vector2(pBody.velocity.x, jumpForce + 3);
                 }
             }
-
             else
             {
                 animator.SetBool("onWall", false);
@@ -145,15 +154,15 @@ public class PlayerController : MonoBehaviour
             }
         }
 
+
+
         //ShootBuff
         if (shoot)
         {
-            if (Input.GetKeyDown(KeyCode.F))
+            if (Input.GetKeyDown(KeyCode.F) && Time.time >= lastShootTime + shootCooldown)
             {
-                float direction = spriteRenderer.flipX ? -1f : 1f;
-                GameObject shootInstance = Instantiate(shootPrefab, transform.position, Quaternion.identity);
-                Rigidbody2D shootRb = shootInstance.GetComponent<Rigidbody2D>();
-                shootRb.velocity = new Vector2(direction * shootSpeed, 0);
+                Instantiate(ShootPrefab, ShootingPoint.position, transform.rotation);
+                lastShootTime = Time.time;
             }
         }
 
@@ -175,14 +184,20 @@ public class PlayerController : MonoBehaviour
         animator.SetBool("IsJumping", !isGrounded);
 
         //Flip
-        if (moveHorizontal != 0f)
+        Debug.Log("rotation: "+transform.rotation.y);
+        Debug.Log("horizontal: "+moveHorizontal);
+        if (!StickOnWall)
         {
-            if (!StickOnWall)
+            if (moveHorizontal < 0)
             {
-                spriteRenderer.flipX = moveHorizontal < 0;
+                transform.localScale = new Vector3(-Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
             }
-            
+            else if (moveHorizontal > 0)
+            {
+                transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
+            }
         }
+
     }
 
     void HealtLogic()

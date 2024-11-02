@@ -28,7 +28,7 @@ public class EnemyPatrolling : EnemyState
         anim = GetComponent<Animator>();
         currentPoint = pointB.transform;
         color = "green";
-        buff = "stick";
+        buff = "shoot";
         stunned = false;
     }
 
