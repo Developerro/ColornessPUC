@@ -9,6 +9,7 @@ TagManager:
   - Projectile
   - DamageArea
   - FallArea
+  - DeathArea
   layers:
   - Default
   - TransparentFX

@@ -70,7 +70,12 @@ public class PlayerController : MonoBehaviour
         {
             TakeDamage(collision);
         }
-        
+        if (collision.gameObject.tag == "DeathArea")
+        {
+            life = 0;
+        }
+
+
     }
 
     private void OnCollisionExit2D(Collision2D collision)
