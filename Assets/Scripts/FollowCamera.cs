@@ -5,6 +5,7 @@ using UnityEngine.SceneManagement;
 
 public class FollowCamera : MonoBehaviour
 {
+    public PlayerController player;
     public float FollowSpeed = 2f;
     public float yOffset = 1f;
     public Transform target;
@@ -18,6 +19,13 @@ public class FollowCamera : MonoBehaviour
         }
         Vector3 newPos = new Vector3(target.position.x, target.position.y + yOffset, -10f);
         transform.position = Vector3.Slerp(transform.position, newPos, FollowSpeed * Time.deltaTime);
+
+        if(player.falling == true)
+        {
+            float offsetX = Random.Range(-0.05f, 0.05f);
+            float offsetY = Random.Range(-0.05f, 0.05f);
+            transform.position += new Vector3(offsetX, offsetY, 0);
+        }
     }
 
     public void Menu()

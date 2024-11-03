@@ -8,6 +8,7 @@ TagManager:
   - Wall
   - Projectile
   - DamageArea
+  - FallArea
   layers:
   - Default
   - TransparentFX

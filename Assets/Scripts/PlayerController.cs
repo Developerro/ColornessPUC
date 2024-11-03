@@ -26,6 +26,8 @@ public class PlayerController : MonoBehaviour
     public EnemyState enemy;
     public bool onWall;
     public bool StickOnWall;
+    public FollowCamera PlayerCamera;
+    public bool falling;
 
     //BUFFS
 
@@ -68,6 +70,7 @@ public class PlayerController : MonoBehaviour
         {
             TakeDamage(collision);
         }
+        
     }
 
     private void OnCollisionExit2D(Collision2D collision)
@@ -88,13 +91,27 @@ public class PlayerController : MonoBehaviour
             }
 
         }
+        if (collision.gameObject.tag == "FallArea")
+        {
+            falling = true;
+            animator.SetBool("Falling", true);
+            pBody.gravityScale = 0.1f;
+            PlayerCamera.FollowSpeed = 10;
+        }
     }
 
     private void OnTriggerExit2D(Collider2D collision)
     {
         try { enemy.absorbable = false; }
         catch { }
-       
+        if (collision.gameObject.tag == "FallArea")
+        {
+            falling = false;
+            animator.SetBool("Falling", false);
+            pBody.gravityScale = 5;
+            PlayerCamera.FollowSpeed = 4;
+        }
+
     }
 
     void AbsorbLogic()
@@ -188,9 +205,7 @@ public class PlayerController : MonoBehaviour
         animator.SetBool("IsJumping", !isGrounded);
 
         //Flip
-        Debug.Log("rotation: "+transform.rotation.y);
-        Debug.Log("horizontal: "+moveHorizontal);
-        if (!StickOnWall)
+        if (!StickOnWall && !falling)
         {
             if (moveHorizontal < 0)
             {
