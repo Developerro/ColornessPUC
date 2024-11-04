@@ -10,6 +10,7 @@ TagManager:
   - DamageArea
   - FallArea
   - DeathArea
+  - SavePoint
   layers:
   - Default
   - TransparentFX

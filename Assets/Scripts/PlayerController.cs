@@ -28,6 +28,7 @@ public class PlayerController : MonoBehaviour
     public bool StickOnWall;
     public FollowCamera PlayerCamera;
     public bool falling;
+    public Vector3 savePoint;
 
     //BUFFS
 
@@ -44,10 +45,12 @@ public class PlayerController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        savePoint  = new Vector3(-27.2f, 530.13f, 0f);
         animator = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         pBody = GetComponent<Rigidbody2D>();
         pCollider = GetComponent<BoxCollider2D>();
+        transform.position = savePoint; 
     }
 
     // Update is called once per frame
@@ -62,7 +65,7 @@ public class PlayerController : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if(collision.gameObject.tag == "Wall")
+        if (collision.gameObject.tag == "Wall")
         {
             onWall = true;
         }
@@ -103,6 +106,10 @@ public class PlayerController : MonoBehaviour
             pBody.gravityScale = 0.1f;
             PlayerCamera.FollowSpeed = 10;
         }
+        if (collision.gameObject.tag == "SavePoint")
+        {
+            savePoint = collision.transform.position;
+        }
     }
 
     private void OnTriggerExit2D(Collider2D collision)
@@ -138,6 +145,10 @@ public class PlayerController : MonoBehaviour
             {
                 shoot = true;
             }
+        }
+        else
+        {
+            animator.SetInteger("Mode", 0);
         }
     }
 
@@ -247,8 +258,11 @@ public class PlayerController : MonoBehaviour
     {
         if(life <= 0)
         {
-            Destroy(gameObject);
-            SceneManager.LoadScene("LevelGreen");
+            transform.position = savePoint;
+            //mode = "";
+            //stick = false;
+            //shoot = false;
+            life = 7;     
         }
     }
 
