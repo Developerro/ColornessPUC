@@ -29,7 +29,7 @@ public class PlayerController : MonoBehaviour
     public FollowCamera PlayerCamera;
     public bool falling;
     public Vector3 savePoint;
-
+    public Vector3 initialSavePoint;
     //BUFFS
 
     //Stick
@@ -45,12 +45,19 @@ public class PlayerController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        initialSavePoint = new Vector3(-27.2f, 530.13f, 0f);
         savePoint  = new Vector3(-27.2f, 530.13f, 0f);
         animator = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         pBody = GetComponent<Rigidbody2D>();
         pCollider = GetComponent<BoxCollider2D>();
-        transform.position = savePoint; 
+        //kbCount = -1;
+        //if(SceneManager.GetActiveScene().name == "LevelGreen")
+        //{
+        //    pBody.AddForce(-Vector2.up * 10); 
+        //}
+
+
     }
 
     // Update is called once per frame
@@ -77,7 +84,10 @@ public class PlayerController : MonoBehaviour
         {
             life = 0;
         }
-
+        //if (collision.gameObject.tag == "FallArea")
+        //{
+        //    pBody.AddForce(-Vector2.up * 10);
+        //}
 
     }
 
@@ -258,7 +268,15 @@ public class PlayerController : MonoBehaviour
     {
         if(life <= 0)
         {
-            transform.position = savePoint;
+            if(savePoint == initialSavePoint)
+            {
+                Destroy(gameObject);
+                SceneManager.LoadScene("LevelGreen");              
+            }
+            else
+            {
+                transform.position = savePoint;
+            }
             //mode = "";
             //stick = false;
             //shoot = false;
@@ -268,7 +286,7 @@ public class PlayerController : MonoBehaviour
 
     void KnockLogic()
     {
-        if (kbCount < 0)
+        if (kbCount <= 0)
         {
             MoveLogic();
         }
