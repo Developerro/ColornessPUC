@@ -45,18 +45,12 @@ public class PlayerController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        initialSavePoint = new Vector3(-27.2f, 530.13f, 0f);
-        savePoint  = new Vector3(-27.2f, 530.13f, 0f);
+        savePoint  = new Vector3(-27.2f, 10f, 0f);
         animator = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         pBody = GetComponent<Rigidbody2D>();
         pCollider = GetComponent<BoxCollider2D>();
-        //kbCount = -1;
-        //if(SceneManager.GetActiveScene().name == "LevelGreen")
-        //{
-        //    pBody.AddForce(-Vector2.up * 10); 
-        //}
-
+        transform.position = savePoint;
 
     }
 
@@ -268,18 +262,7 @@ public class PlayerController : MonoBehaviour
     {
         if(life <= 0)
         {
-            if(savePoint == initialSavePoint)
-            {
-                Destroy(gameObject);
-                SceneManager.LoadScene("LevelGreen");              
-            }
-            else
-            {
-                transform.position = savePoint;
-            }
-            //mode = "";
-            //stick = false;
-            //shoot = false;
+            transform.position = savePoint;
             life = 7;     
         }
     }
