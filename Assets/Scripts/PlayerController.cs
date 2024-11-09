@@ -45,7 +45,7 @@ public class PlayerController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        savePoint  = new Vector3(-27.2f, 10f, 0f);
+        savePoint  = new Vector3(155f, 10f, 0f);
         animator = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         pBody = GetComponent<Rigidbody2D>();
