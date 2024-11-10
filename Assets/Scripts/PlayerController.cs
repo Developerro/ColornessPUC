@@ -31,6 +31,9 @@ public class PlayerController : MonoBehaviour
     public bool falling;
     public Vector3 savePoint;
     public Vector3 initialSavePoint;
+    public static Vector3 savedPosition;
+    public Vector3 defaultSavePoint = new Vector3(-27.2f, 570.41f, 0f);
+
     //BUFFS
 
     //Stick
@@ -46,12 +49,12 @@ public class PlayerController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        savePoint  = new Vector3(155f, 10f, 0f);
+        savePoint = savedPosition != Vector3.zero ? savedPosition : defaultSavePoint;
+        transform.position = savePoint;
         animator = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         pBody = GetComponent<Rigidbody2D>();
         pCollider = GetComponent<BoxCollider2D>();
-        transform.position = savePoint;
 
     }
 
@@ -151,6 +154,8 @@ public class PlayerController : MonoBehaviour
                 if (enemy.buff == "stick")
                 {
                     stick = true;
+                    //temp
+                    shoot = true;
                 }
                 if (enemy.buff == "shoot")
                 {
@@ -270,10 +275,11 @@ public class PlayerController : MonoBehaviour
 
     void DeadState()
     {
-        if(life <= 0)
+        if (life <= 0)
         {
-            transform.position = savePoint;
-            life = 7;     
+            savedPosition = savePoint; 
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex); 
+            life = 7;
         }
     }
 
