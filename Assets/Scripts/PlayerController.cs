@@ -15,7 +15,8 @@ public class PlayerController : MonoBehaviour
     public int life;
     public float jumpForce;
     public Rigidbody2D pBody;
-    private BoxCollider2D pCollider;
+    public BoxCollider2D pCollider;
+    public CircleCollider2D AbsorbZone;
     public bool isGrounded;
     private SpriteRenderer spriteRenderer;
     public Animator animator;
@@ -72,7 +73,7 @@ public class PlayerController : MonoBehaviour
         }
         if (collision.gameObject.tag == "DamageArea")
         {
-            TakeDamage(collision);
+            TakeDamage(transform.position);
         }
         if (collision.gameObject.tag == "DeathArea")
         {
@@ -92,6 +93,7 @@ public class PlayerController : MonoBehaviour
             onWall = false;
         }
     }
+
     private void OnTriggerStay2D(Collider2D collision)
     {
         if (collision.gameObject.tag == "Enemy")
@@ -118,6 +120,11 @@ public class PlayerController : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D collision)
     {
+        if (collision.gameObject.name == "BossGate")
+        {
+            AbsorbZone.enabled = false;
+            collision.isTrigger = false;
+        }
         try { enemy.absorbable = false; }
         catch { }
         if (collision.gameObject.tag == "FallArea")
@@ -132,28 +139,31 @@ public class PlayerController : MonoBehaviour
 
     void AbsorbLogic()
     {
-        
-        if (Input.GetKeyDown(KeyCode.R) && enemy.absorbable)
-        {
-            mode = enemy.color;
-            enemy.life--;
-        }
-        if (mode == "green")
-        {
-            animator.SetInteger("Mode", 1);
-            if(enemy.buff == "stick")
+        try {
+            if (Input.GetKeyDown(KeyCode.R) && enemy.absorbable)
             {
-                stick = true;
+                mode = enemy.color;
+                enemy.life--;
             }
-            if(enemy.buff == "shoot")
+            if (mode == "green")
             {
-                shoot = true;
+                animator.SetInteger("Mode", 1);
+                if (enemy.buff == "stick")
+                {
+                    stick = true;
+                }
+                if (enemy.buff == "shoot")
+                {
+                    shoot = true;
+                }
+            }
+            else
+            {
+                animator.SetInteger("Mode", 0);
             }
         }
-        else
-        {
-            animator.SetInteger("Mode", 0);
-        }
+        catch { }
+       
     }
 
     void BuffsLogic()
@@ -287,16 +297,16 @@ public class PlayerController : MonoBehaviour
         kbCount -= Time.deltaTime;
     }
 
-    public void TakeDamage(Collision2D collision)
+    public void TakeDamage(Vector3 position)
     {
         kbCount = kbTime;
-        if (collision.transform.position.x <= transform.position.x)
-        {
-            isKnockRight = true;
-        }
-        if (collision.transform.position.x > transform.position.x)
+        if (position.x <= transform.position.x)
         {
             isKnockRight = false;
+        }
+        if (position.x > transform.position.x)
+        {
+            isKnockRight = true;
         }
         life--;
         animator.SetTrigger("TakeDamage");

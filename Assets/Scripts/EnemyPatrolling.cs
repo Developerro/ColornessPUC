@@ -9,8 +9,14 @@ public class EnemyState: MonoBehaviour
     public string buff;
     public bool absorbable;
     public int life;
+
+    public void TakeDamage(int damage)
+    {
+        life -= damage;
+    }
 }
 
+    
 public class EnemyPatrolling : EnemyState
 {
     public GameObject pointA;
@@ -99,7 +105,7 @@ public class EnemyPatrolling : EnemyState
                 //Temporário
                 if (!stunned)
                 {
-                    life--;
+                    TakeDamage(1);
                 }
                 player.pBody.velocity = new Vector2(0, 15);
                 anim.SetTrigger("TakeDamage");
@@ -107,7 +113,7 @@ public class EnemyPatrolling : EnemyState
             }
             else
             {
-                player.TakeDamage(collision);
+                player.TakeDamage(transform.position);
             }
 
             
