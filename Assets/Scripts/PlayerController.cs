@@ -221,7 +221,7 @@ public class PlayerController : MonoBehaviour
         //ShootBuff
         if (shoot)
         {
-            if (Input.GetKeyDown(KeyCode.F) && Time.time >= lastShootTime + shootCooldown)
+            if (Input.GetKeyDown(KeyCode.T) && Time.time >= lastShootTime + shootCooldown && !StickOnWall)
             {
                 Instantiate(ShootPrefab, ShootingPoint.position, transform.rotation);
                 lastShootTime = Time.time;
