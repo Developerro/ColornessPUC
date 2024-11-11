@@ -1,6 +1,6 @@
 using System.Collections;
 using UnityEngine;
-
+using UnityEngine.SceneManagement;
 public class Beelzebufo : EnemyState
 {
     public Vector3 rightSide;
@@ -12,7 +12,11 @@ public class Beelzebufo : EnemyState
     private bool isMoving = false;
     private bool hasFlipped = false;
     public int previousLife;
+    public bool initFight;
     public PlayerController player;
+    public BoxCollider2D bossGate;
+    public bool live;
+    public FollowCamera Camera;
 
     public Material flashMaterial;
     private Material originalMaterial;
@@ -20,6 +24,8 @@ public class Beelzebufo : EnemyState
 
     void Start()
     {
+        live = true;
+        initFight = false;
         life = 50;
         previousLife = life;
         anim = GetComponent<Animator>();
@@ -30,20 +36,31 @@ public class Beelzebufo : EnemyState
         originalMaterial = spriteRenderer.material;
 
         rightPosition();
-        StartCoroutine(CycleRoutine());
     }
 
     void Update()
     {
-        if (life <= 0)
+        
+        if(bossGate.isTrigger == false && live)
         {
-            Destroy(gameObject);
+            if(initFight == false)
+            {
+                StartCoroutine(CycleRoutine());
+                initFight = true;
+            }
         }
-        Debug.Log(life);
+        
+        if(life <= 0 && live)
+        {
+            live = false;
+            player.savePoint = player.defaultSavePoint;
+            StartCoroutine(LoadMenu());
+        }
+
         if (life < previousLife)
         {
             StartCoroutine(FlashEffect());
-            previousLife = life; 
+            previousLife = life;
         }
         if (isMoving)
         {
@@ -73,6 +90,11 @@ public class Beelzebufo : EnemyState
     {
         float elapsed = 0.0f;
 
+        if(life <= 10)
+        {
+            waitTime = 5000f;
+        }
+        
         while (elapsed < waitTime)
         {
             anim.Play("BeelzebufoSmoke");
@@ -85,6 +107,7 @@ public class Beelzebufo : EnemyState
         }
 
         StartCoroutine(StartJump());
+        
     }
 
     IEnumerator StartJump()
@@ -97,11 +120,42 @@ public class Beelzebufo : EnemyState
 
     IEnumerator FlashEffect()
     {
-        spriteRenderer.material = flashMaterial;
-        yield return new WaitForSeconds(0.1f);
+        if (live)
+        {
+            spriteRenderer.material = flashMaterial;
+            yield return new WaitForSeconds(0.1f);
 
-        spriteRenderer.material = originalMaterial;
+            spriteRenderer.material = originalMaterial;
+        }
+        
     }
+
+    IEnumerator LoadMenu()
+    {       
+
+        player.pBody.constraints = RigidbodyConstraints2D.FreezeRotation | RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezePositionY;
+        float shakeDuration = 5f;
+        float shakeMagnitude = 0.1f;
+        Vector3 originalPosition = transform.position;
+        Camera.target = transform;
+        Camera.yOffset = -2;
+        float elapsed = 0f;
+        while (elapsed < shakeDuration)
+        {
+            player.savePoint = player.defaultSavePoint;
+            anim.Play("Beelzebufo");
+            spriteRenderer.material = flashMaterial;
+            float offsetX = Random.Range(-shakeMagnitude, shakeMagnitude);
+            float offsetY = Random.Range(-shakeMagnitude, shakeMagnitude);
+
+            transform.position = originalPosition + new Vector3(offsetX, offsetY, 0);
+
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+        SceneManager.LoadScene("Main Menu");
+    }
+
 
     void rightPosition()
     {
@@ -142,6 +196,7 @@ public class Beelzebufo : EnemyState
             player.TakeDamage(transform.position);
         }
     }
+
 
 
 

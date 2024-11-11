@@ -30,9 +30,9 @@ public class PlayerController : MonoBehaviour
     public FollowCamera PlayerCamera;
     public bool falling;
     public Vector3 savePoint;
-    public Vector3 initialSavePoint;
-    public static Vector3 savedPosition;
+    private static Vector3 savedPosition;
     public Vector3 defaultSavePoint = new Vector3(-27.2f, 570.41f, 0f);
+    public Beelzebufo Beelzebufo;
 
     //BUFFS
 
@@ -66,6 +66,12 @@ public class PlayerController : MonoBehaviour
         BuffsLogic();
         AbsorbLogic();
         KnockLogic();
+
+        if(!StickOnWall && !Beelzebufo.live)
+        {
+            pBody.constraints &= ~RigidbodyConstraints2D.FreezePositionX;
+            pBody.constraints &= ~RigidbodyConstraints2D.FreezePositionY;
+        }
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -277,6 +283,7 @@ public class PlayerController : MonoBehaviour
     {
         if (life <= 0)
         {
+            Debug.Log("teste");
             savedPosition = savePoint; 
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex); 
             life = 7;

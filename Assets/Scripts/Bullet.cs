@@ -27,13 +27,15 @@ public class Bullet : MonoBehaviour
         {
             if (enemy != null)
             {
-                enemy.TakeDamage(1);
+                enemy.TakeDamage(20);
+                Destroy(gameObject);
             }
             
         }
  
-            if (!collision.CompareTag("Player"))
+        if (collision.CompareTag("Ground") || collision.CompareTag("Wall"))
         {
+
             Destroy(gameObject);
         }
     }
