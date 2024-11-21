@@ -153,6 +153,7 @@ public class Beelzebufo : EnemyState
             elapsed += Time.deltaTime;
             yield return null;
         }
+        player.savePoint = player.defaultSavePoint;
         SceneManager.LoadScene("Main Menu");
     }
 

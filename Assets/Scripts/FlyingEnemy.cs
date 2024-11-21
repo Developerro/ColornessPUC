@@ -27,7 +27,7 @@ public class FlyingEnemy : EnemyState
         spriteRenderer = GetComponent<SpriteRenderer>();
         originalMaterial = spriteRenderer.material;
 
-        life = 5;
+        life = 3;
         previousLife = life;
         
     }

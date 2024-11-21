@@ -72,10 +72,20 @@ public class PlayerController : MonoBehaviour
         {
             pBody.constraints &= ~RigidbodyConstraints2D.FreezePositionX;
             pBody.constraints &= ~RigidbodyConstraints2D.FreezePositionY;
+            if (StickOnWall)
+            {
+                pBody.velocity = new Vector2(pBody.velocity.x, jumpForce + 3);
+            }
         }
         if (!stick)
         {
             isGrounded = Physics2D.BoxCast(pCollider.bounds.center, pCollider.bounds.size, 0f, Vector2.down, 1f);
+        }
+
+        if(Beelzebufo.life <= 0)
+        {
+            savePoint = defaultSavePoint;
+            savedPosition = defaultSavePoint;
         }
     }
 
@@ -158,7 +168,7 @@ public class PlayerController : MonoBehaviour
     void ShootGreen()
     {
         Instantiate(ShootPrefab, ShootingPoint.position, transform.rotation);
-        lastShootTime = Time.time;
+                lastShootTime = Time.time;
     }
     void AbsorbLogic()
     {
@@ -219,7 +229,6 @@ public class PlayerController : MonoBehaviour
                     onWall = false;
                     pBody.constraints &= ~RigidbodyConstraints2D.FreezePositionX;
                     pBody.constraints &= ~RigidbodyConstraints2D.FreezePositionY;
-                    pBody.velocity = new Vector2(pBody.velocity.x, jumpForce + 3);
                 }
             }
             else
@@ -323,6 +332,7 @@ public class PlayerController : MonoBehaviour
 
     public void TakeDamage(Vector3 position)
     {
+        animator.SetTrigger("TakeDamage");
         kbCount = kbTime;
         if (position.x <= transform.position.x)
         {
@@ -333,7 +343,7 @@ public class PlayerController : MonoBehaviour
             isKnockRight = true;
         }
         life--;
-        animator.SetTrigger("TakeDamage");
+        
     }
 
 }
