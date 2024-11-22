@@ -154,7 +154,7 @@ public class Beelzebufo : EnemyState
             yield return null;
         }
         player.savePoint = player.defaultSavePoint;
-        SceneManager.LoadScene("Main Menu");
+        SceneManager.LoadScene("BlueCutScene");
     }
 
 

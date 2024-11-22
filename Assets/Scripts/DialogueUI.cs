@@ -2,47 +2,43 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
-using UnityEngine.SceneManagement; // Added to handle scene transitions
+using UnityEngine.SceneManagement; 
 
 public class DialogueUI : MonoBehaviour
 {
-    [SerializeField] private TMP_Text textLabel;
-    [SerializeField] private TypewriterEffect typewriterEffect;
-    [SerializeField] private float delayBetweenTexts = 1f;
+    [SerializeField] private float cutsceneDuration = 43f;
+    private bool cutsceneSkipped = false;
+
+    private void Start()
+    {
+        StartCoroutine(CutsceneTimer());
+    }
 
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.R))
         {
-            SceneManager.LoadScene("LevelGreen");
+            SkipCutscene();
         }
     }
-    private List<string> texts = new List<string>
-    {
-    "Ha muito tempo, as cores brilhavam e os reinos viviam em paz. Culturas unicas coexistiam, compartilhando arte, musica e tradicoes.",
-    "Entao... ele chegou.",
-    "Sua chegada trouxe o fim. As cores sumiram, levando suas respectivas culturas. Mas um jovem do Reino Vermelho se manteve esperancoso.",
-    "Ele sonhava restaurar as cores e a riqueza das culturas perdidas. Um dia, descobriu que podia tentar.",
-    "Mas seu pecado o lancou ao abismo…",
-    "..."
-    };
 
-
-    private void Start()
+    private IEnumerator CutsceneTimer()
     {
-        StartCoroutine(DisplayTextsSequentially());
-    }
-
-    private IEnumerator DisplayTextsSequentially()
-    {
-        foreach (string text in texts)
+        yield return new WaitForSeconds(cutsceneDuration);
+        if (!cutsceneSkipped)
         {
-            textLabel.text = ""; 
-            yield return typewriterEffect.Run(text, textLabel); 
-            yield return new WaitForSeconds(delayBetweenTexts);
+            LoadNextScene();
         }
+    }
 
+    private void SkipCutscene()
+    {
+        cutsceneSkipped = true;
+        LoadNextScene();
+    }
 
+    private void LoadNextScene()
+    {
         SceneManager.LoadScene("LevelGreen");
     }
 }

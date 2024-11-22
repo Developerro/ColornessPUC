@@ -14,4 +14,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/LevelGreen.unity
     guid: 2cda990e2423bbf4892e6590ba056729
+  - enabled: 1
+    path: Assets/Scenes/BlueCutScene.unity
+    guid: 2f9e28e20dbd59e47a62df96776a0573
   m_configObjects: {}
