@@ -131,20 +131,20 @@ public class Beelzebufo : EnemyState
     }
 
     IEnumerator LoadMenu()
-    {       
-
-        player.pBody.constraints = RigidbodyConstraints2D.FreezeRotation | RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezePositionY;
+    {
         float shakeDuration = 5f;
         float shakeMagnitude = 0.1f;
         Vector3 originalPosition = transform.position;
         Camera.target = transform;
         Camera.yOffset = -2;
         float elapsed = 0f;
+
         while (elapsed < shakeDuration)
         {
             player.savePoint = player.defaultSavePoint;
             anim.Play("Beelzebufo");
             spriteRenderer.material = flashMaterial;
+
             float offsetX = Random.Range(-shakeMagnitude, shakeMagnitude);
             float offsetY = Random.Range(-shakeMagnitude, shakeMagnitude);
 
@@ -153,9 +153,12 @@ public class Beelzebufo : EnemyState
             elapsed += Time.deltaTime;
             yield return null;
         }
+
+   
         player.savePoint = player.defaultSavePoint;
         SceneManager.LoadScene("BlueCutScene");
     }
+
 
 
     void rightPosition()
@@ -186,7 +189,11 @@ public class Beelzebufo : EnemyState
     {
         if (collision.gameObject.tag == "Player")
         {
-            player.TakeDamage(transform.position);
+            if(life > 0)
+            {
+                player.TakeDamage(transform.position);
+            }
+           
         }
     }
 
@@ -194,7 +201,11 @@ public class Beelzebufo : EnemyState
     {
         if (other.CompareTag("Player"))
         {
-            player.TakeDamage(transform.position);
+            if(life > 0)
+            {
+                player.TakeDamage(transform.position);
+            }
+            
         }
     }
 

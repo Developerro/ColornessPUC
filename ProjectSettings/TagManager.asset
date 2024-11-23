@@ -21,7 +21,7 @@ TagManager:
   - Water
   - UI
   - Tilemap
-  - 
+  - BlueArea
   - 
   - 
   - 
@@ -58,4 +58,7 @@ TagManager:
     locked: 0
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: BlueArea
+    uniqueID: 1954175353
     locked: 0
