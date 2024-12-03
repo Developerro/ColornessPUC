@@ -1,0 +1,1 @@
+As pastas com os arquivos de arte estão na pasta assets do projeto no GitHub, elas estão denominadas como Art e Animations
